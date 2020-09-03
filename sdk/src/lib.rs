@@ -100,29 +100,33 @@ pub fn hash_sha256(m: &str) -> Vec<u8> {
 mod tests {
     use super::*;
 
+    static JSON_DATA: &str = "test_data/json_data.json";
     static PUBLIC_KEY: &str = "test_data/public_key.pem";
     static SECRET_KEY: &str = "test_data/secret_key.pem";
     static FAIR_BLIND_SIGNATURE: &str = "test_data/fair_blind_signature.txt";
 
     #[test]
-    fn should_parse_json() {
-        let json_data = JsonData {
-            fair_blind_signature: "fair blind signature".to_string(),
-            pubkey: "public key".to_string(),
-            signature: "signature".to_string(),
-            signed: SignedData {
-                data: "data".to_string(),
-                random: 10
-            }
-        };
+    fn all() {
+        let json_data_str = read_or_panic(JSON_DATA);
 
-        let data = serde_json::to_string(&json_data)
-            .expect("failed to convert to string");
-
-        let parsed = JsonData::from_str(&data)
+        let json_data = JsonData::from_str(&json_data_str)
             .expect("failed to parse");
-        
-        assert_eq!(json_data, parsed);
+
+        let signer_pubkey = read_or_panic(PUBLIC_KEY);
+        let judge_pubkey = read_or_panic(PUBLIC_KEY);
+
+        //assert_eq!(json_data.fair_blind_signature, read_or_panic(FAIR_BLIND_SIGNATURE));
+        assert!(json_data.verify_fbs(&signer_pubkey, &judge_pubkey));
+
+        assert!(json_data.verify_signature());
+    }
+
+    #[test]
+    fn should_parse_json() {
+        let json_data = read_or_panic(JSON_DATA);
+
+        JsonData::from_str(&json_data)
+            .expect("failed to parse");
     }
 
     #[test]
@@ -203,7 +207,7 @@ mod tests {
             .sign(PaddingScheme::new_pkcs1v15_sign(Some(SHA2_256)), &digest)
             .unwrap();
 
-        println!("signature\n{}", serde_json::to_string(&signature).unwrap());
+        println!("signature\n{:?}", serde_json::to_string(&signature).unwrap());
         String::new()
     }
 }
