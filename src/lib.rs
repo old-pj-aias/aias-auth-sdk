@@ -1,3 +1,5 @@
+use rsa::{RSAPublicKey};
+
 use serde::{Serialize, Deserialize};
 
 use fair_blind_signature::{BlindSignature};
@@ -22,6 +24,10 @@ pub fn parse_json(data: &str) -> serde_json::Result<JsonData> {
 
 pub fn parse_fbs(data: &str) -> serde_json::Result<BlindSignature> {
     serde_json::from_str(data)
+}
+
+pub fn parse_pubkey(data: &str) -> Result<RSAPublicKey, rsa::errors::Error> {
+    RSAPublicKey::from_pkcs8(data.as_bytes())
 }
 
 
