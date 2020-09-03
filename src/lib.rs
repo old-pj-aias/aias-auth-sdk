@@ -18,8 +18,10 @@ pub struct SignedData {
     pub random: u32,
 }
 
-pub fn parse_json(data: &str) -> serde_json::Result<JsonData> {
-    serde_json::from_str(data)
+impl JsonData {
+    pub fn from_str(data: &str) -> serde_json::Result<JsonData> {
+        serde_json::from_str(data)
+    }
 }
 
 pub fn parse_fbs(data: &str) -> serde_json::Result<BlindSignature> {
