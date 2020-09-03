@@ -2,7 +2,8 @@ use rsa::{RSAPublicKey};
 
 use serde::{Serialize, Deserialize};
 
-use fair_blind_signature::{BlindSignature};
+use aias_core::verifyer;
+use fair_blind_signature::{Signature};
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct JsonData {
@@ -22,9 +23,18 @@ impl JsonData {
     pub fn from_str(data: &str) -> serde_json::Result<JsonData> {
         serde_json::from_str(data)
     }
+
+    pub fn verify_signature(&self, signer_pubkey: &str, judge_pubkey: &str) -> bool {
+        verifyer::verify(
+            self.fair_blind_signature.clone(),
+            self.pubkey.to_string(),
+            signer_pubkey.to_string(),
+            judge_pubkey.to_string()
+        )
+    }
 }
 
-pub fn parse_fbs(data: &str) -> serde_json::Result<BlindSignature> {
+pub fn parse_fbs(data: &str) -> serde_json::Result<Signature> {
     serde_json::from_str(data)
 }
 
@@ -39,7 +49,7 @@ mod tests {
     use super::*;
 
     static PUBLIC_KEY: &str = "test_data/public_key.pem";
-    static SIGNATURE: &str = "test_data/signature.txt";
+    static FAIR_BLIND_SIGNATURE: &str = "test_data/fair_blind_signature.txt";
 
     #[test]
     fn should_parse_json() {
@@ -71,9 +81,32 @@ mod tests {
 
     #[test]
     fn should_parse_fbs() {
-        let signature = read_or_panic(&SIGNATURE);
+        let signature = read_or_panic(FAIR_BLIND_SIGNATURE);
         parse_fbs(&signature)
             .expect("failed to parse fair-blind-signature");
+    }
+
+    #[test]
+    fn should_verify_signature() {
+        let fair_blind_signature = read_or_panic(FAIR_BLIND_SIGNATURE);
+        let signature = "hogehoge".to_string();
+
+        let signer_pubkey = read_or_panic(PUBLIC_KEY);
+        let judge_pubkey = read_or_panic(PUBLIC_KEY);
+
+        let pubkey = read_or_panic(PUBLIC_KEY);
+
+        let json_data = JsonData {
+            fair_blind_signature,
+            pubkey,
+            signature,
+            signed: SignedData {
+                data: "data".to_string(),
+                random: 10
+            }
+        };
+
+        assert!(json_data.verify_signature(&signer_pubkey, &judge_pubkey));
     }
 
     fn read_or_panic(file: &str) -> String {
