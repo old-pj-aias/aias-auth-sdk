@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct JsonData {
     pub fair_blind_signature: String,
     pub pubkey: String,
@@ -8,7 +8,7 @@ pub struct JsonData {
     pub signed: SignedData,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct SignedData {
     pub data: String,
     pub random: u32,
@@ -21,8 +21,26 @@ pub fn parse_json(data: &str) -> serde_json::Result<JsonData> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn should_parse_json() {
+        let json_data = JsonData {
+            fair_blind_signature: "fair blind signature".to_string(),
+            pubkey: "public key".to_string(),
+            signature: "signature".to_string(),
+            signed: SignedData {
+                data: "data".to_string(),
+                random: 10
+            }
+        };
+
+        let data = serde_json::to_string(&json_data)
+            .expect("failed to convert to string");
+
+        let parsed = parse_json(&data)
+            .expect("failed to parse");
+        
+        assert_eq!(json_data, parsed);
     }
 }
