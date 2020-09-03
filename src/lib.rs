@@ -24,7 +24,7 @@ impl JsonData {
         serde_json::from_str(data)
     }
 
-    pub fn verify_signature(&self, signer_pubkey: &str, judge_pubkey: &str) -> bool {
+    pub fn verify_fbs(&self, signer_pubkey: &str, judge_pubkey: &str) -> bool {
         verifyer::verify(
             self.fair_blind_signature.clone(),
             self.pubkey.to_string(),
@@ -106,7 +106,7 @@ mod tests {
             }
         };
 
-        assert!(json_data.verify_signature(&signer_pubkey, &judge_pubkey));
+        assert!(json_data.verify_fbs(&signer_pubkey, &judge_pubkey));
     }
 
     fn read_or_panic(file: &str) -> String {
