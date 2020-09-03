@@ -1,5 +1,7 @@
 use serde::{Serialize, Deserialize};
 
+use fair_blind_signature::{BlindSignature};
+
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct JsonData {
     pub fair_blind_signature: String,
@@ -15,6 +17,10 @@ pub struct SignedData {
 }
 
 pub fn parse_json(data: &str) -> serde_json::Result<JsonData> {
+    serde_json::from_str(data)
+}
+
+pub fn parse_fbs(data: &str) -> serde_json::Result<BlindSignature> {
     serde_json::from_str(data)
 }
 
