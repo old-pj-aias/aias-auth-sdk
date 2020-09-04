@@ -15,10 +15,10 @@ pub extern fn verify(data: *const c_char, signer_pubkey: *const c_char, judge_pu
     let signer_pubkey_str = utils::from_c_str(signer_pubkey);
     let judge_pubkey_str = utils::from_c_str(judge_pubkey);
 
-    let fbs_valid = json_data.verify_fbs(&signer_pubkey_str, &judge_pubkey_str) as c_int;
-    let signature_valid = json_data.verify_signature() as c_int;
+    let fbs_valid = json_data.verify_fbs(&signer_pubkey_str, &judge_pubkey_str);
+    let signature_valid = json_data.verify_signature();
 
-    fbs_valid | signature_valid
+    (fbs_valid || signature_valid) as c_int
 }
 
 
