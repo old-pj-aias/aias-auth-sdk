@@ -19,7 +19,7 @@ pub extern fn verify(data: *const c_char, signer_pubkey: *const c_char, judge_pu
     let fbs_valid = json_data.verify_fbs(&signer_pubkey_str, &judge_pubkey_str);
     let signature_valid = json_data.verify_signature();
 
-    (fbs_valid || signature_valid) as c_int
+    (fbs_valid && signature_valid) as c_int
 }
 
 
