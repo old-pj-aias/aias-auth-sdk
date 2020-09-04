@@ -1,6 +1,7 @@
 use std::os::raw::{c_char, c_int};
 use aias_auth_sdk::{utils, JsonData};
 
+#[no_mangle]
 pub extern fn verify(data: *const c_char, signer_pubkey: *const c_char, judge_pubkey: *const c_char) -> c_int {
     let data_str = utils::from_c_str(data);
 
