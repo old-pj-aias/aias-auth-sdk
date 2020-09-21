@@ -1,0 +1,3 @@
+[submodule "sdk/test_data/secrets"]
+	path = sdk/test_data/secrets
+	url = git@github.com:project-aias/test-secrets.git

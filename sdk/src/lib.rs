@@ -101,8 +101,8 @@ mod tests {
     use super::*;
 
     static JSON_DATA: &str = "test_data/json_data.json";
-    static PUBLIC_KEY: &str = "test_data/public_key.pem";
-    static SECRET_KEY: &str = "test_data/secret_key.pem";
+    static PUBLIC_KEY: &str = "test_data/secrets/pk1.pem";
+    static SECRET_KEY: &str = "test_data/secrets/sk1.pem";
     static FAIR_BLIND_SIGNATURE: &str = "test_data/fair_blind_signature.txt";
 
     #[test]
