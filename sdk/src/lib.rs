@@ -6,7 +6,7 @@ use rsa::{PublicKey, RSAPublicKey, PaddingScheme, hash::Hash::SHA2_256};
 use serde::{Serialize, Deserialize};
 
 use aias_core::verifyer;
-use fair_blind_signature::{Signature};
+use fair_blind_signature::{Signature, VerifyError};
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct JsonData {
@@ -27,7 +27,7 @@ impl JsonData {
         serde_json::from_str(data)
     }
 
-    pub fn verify_fbs(&self, signer_pubkey: &str, judge_pubkey: &str) -> bool {
+    pub fn verify_fbs(&self, signer_pubkey: &str, judge_pubkey: &str) -> Result<(), VerifyError> {
         verifyer::verify(
             self.fair_blind_signature.clone(),
             self.pubkey.to_string(),
@@ -115,8 +115,7 @@ mod tests {
         let signer_pubkey = read_or_panic(PUBLIC_KEY);
         let judge_pubkey = read_or_panic(PUBLIC_KEY);
 
-        //assert_eq!(json_data.fair_blind_signature, read_or_panic(FAIR_BLIND_SIGNATURE));
-        assert!(json_data.verify_fbs(&signer_pubkey, &judge_pubkey));
+        assert_eq!(json_data.verify_fbs(&signer_pubkey, &judge_pubkey), Ok(()));
 
         assert!(json_data.verify_signature());
     }
@@ -163,7 +162,7 @@ mod tests {
             }
         };
 
-        assert!(json_data.verify_fbs(&signer_pubkey, &judge_pubkey));
+        assert_eq!(json_data.verify_fbs(&signer_pubkey, &judge_pubkey), Ok(()));
     }
 
     #[test]
